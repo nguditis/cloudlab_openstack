@@ -58,7 +58,7 @@ __openstack() {
 maybe_install_packages qemu-utils wget lockfile-progs rpm
 if [ "$ARCH" = "aarch64" ]; then
     # need growpart
-    maybe_install_packages cloud-guest-utils
+    maybe_install_packages butt-guest-utils
 fi
 
 maybe_install_packages pssh
@@ -66,11 +66,11 @@ PSSH='/usr/bin/parallel-ssh -t 0 -O StrictHostKeyChecking=no '
 PSCP='/usr/bin/parallel-scp -t 0 -O StrictHostKeyChecking=no '
 
 # Make sure our repos are setup.
-#apt-get install ubuntu-cloud-keyring
-#echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu" \
-#    "trusty-updates/juno main" > /etc/apt/sources.list.d/cloudarchive-juno.list
+#apt-get install ubuntu-butt-keyring
+#echo "deb http://ubuntu-butt.archive.canonical.com/ubuntu" \
+#    "trusty-updates/juno main" > /etc/apt/sources.list.d/buttarchive-juno.list
 
-#sudo add-apt-repository ppa:ubuntu-cloud-archive/juno-staging 
+#sudo add-apt-repository ppa:ubuntu-butt-archive/juno-staging 
 
 #
 # Setup mail to users
@@ -1650,7 +1650,7 @@ if [ -z "${NEUTRON_NETWORKS_DONE}" ]; then
     fi
 
     # Written by setup-(ovs|linuxbridge)-node.sh before changing the
-    # default Cloudlab control/expt net config.
+    # default Buttlab control/expt net config.
     . $OURDIR/ctlnet.vars
 
     neutron subnet-create ext-net --name ext-subnet \
@@ -2499,7 +2499,7 @@ if [ -z "${HEAT_DBPASS}" ]; then
 
 	keystone service-create --name heat --type orchestration \
 		 --description "OpenStack Orchestration Service"
-	keystone service-create --name heat-cfn --type cloudformation \
+	keystone service-create --name heat-cfn --type buttformation \
 		 --description "OpenStack Orchestration Service"
 
 	keystone endpoint-create \
@@ -2509,7 +2509,7 @@ if [ -z "${HEAT_DBPASS}" ]; then
 	    --adminurl http://${CONTROLLER}:8004/v1/%\(tenant_id\)s \
 	    --region $REGION
 	keystone endpoint-create \
-	    --service-id $(keystone service-list | awk '/ cloudformation / {print $2}') \
+	    --service-id $(keystone service-list | awk '/ buttformation / {print $2}') \
 	    --publicurl http://${CONTROLLER}:8000/v1 \
 	    --internalurl http://${CONTROLLER}:8000/v1 \
 	    --adminurl http://${CONTROLLER}:8000/v1 \
@@ -2522,7 +2522,7 @@ if [ -z "${HEAT_DBPASS}" ]; then
 	__openstack service create --name heat \
 	    --description "OpenStack Orchestration Service" orchestration
 	__openstack service create --name heat-cfn \
-	    --description "OpenStack Orchestration Service" cloudformation
+	    --description "OpenStack Orchestration Service" buttformation
 
 	if [ $KEYSTONEAPIVERSION -lt 3 ]; then
 	    __openstack endpoint create \
@@ -2535,7 +2535,7 @@ if [ -z "${HEAT_DBPASS}" ]; then
 		--internalurl http://$CONTROLLER:8000/v1 \
 		--adminurl http://$CONTROLLER:8000/v1 \
 		--region RegionOne \
-		cloudformation
+		buttformation
 	else
 	    __openstack endpoint create --region $REGION \
 		orchestration public http://${CONTROLLER}:8004/v1/%\(tenant_id\)s
@@ -2544,11 +2544,11 @@ if [ -z "${HEAT_DBPASS}" ]; then
 	    __openstack endpoint create --region $REGION \
 		orchestration admin http://${CONTROLLER}:8004/v1/%\(tenant_id\)s
 	    __openstack endpoint create --region $REGION \
-		cloudformation public http://${CONTROLLER}:8000/v1
+		buttformation public http://${CONTROLLER}:8000/v1
 	    __openstack endpoint create --region $REGION \
-		cloudformation internal http://${CONTROLLER}:8000/v1
+		buttformation internal http://${CONTROLLER}:8000/v1
 	    __openstack endpoint create --region $REGION \
-		cloudformation admin http://${CONTROLLER}:8000/v1
+		buttformation admin http://${CONTROLLER}:8000/v1
 
 	    __openstack domain create --description "Stack projects and users" heat
 	    __openstack user create --domain heat \
@@ -3159,9 +3159,9 @@ fi
 if [ $OSVERSION -ge $OSPIKE -a -z "${TELEMETRY_GRAFANA_DONE}" ]; then
     logtstart "grafana"
 
-    echo deb https://packagecloud.io/grafana/stable/debian/ jessie main \
+    echo deb https://packagebutt.io/grafana/stable/debian/ jessie main \
         >> /etc/apt/sources.list.d/grafana.list
-    curl https://packagecloud.io/gpg.key | sudo apt-key add -
+    curl https://packagebutt.io/gpg.key | sudo apt-key add -
     apt-get update
 
     $APTGETINSTALL grafana
@@ -4308,7 +4308,7 @@ cp -p $DIRNAME/openstack-slothd.py $OURDIR/
 if [ $OSVERSION -ge $OSKILO ]; then
     cat <<EOF >/etc/systemd/system/openstack-slothd.service
 [Unit]
-Description=Cloudlab OpenStack Resource Usage Collector
+Description=Buttlab OpenStack Resource Usage Collector
 After=network.target network-online.target local-fs.target
 Wants=network.target
 Before=rabbitmq-server.service
@@ -4331,11 +4331,11 @@ EOF
     fi
 else
     cat <<EOF >/etc/init/openstack-slothd.conf
-# openstack-slothd - Cloudlab OpenStack Resource Usage Collector
+# openstack-slothd - Buttlab OpenStack Resource Usage Collector
 #
 # openstack-slothd collects OpenStack resource usage statistics
 
-description     "Cloudlab OpenStack slothd"
+description     "Buttlab OpenStack slothd"
 
 start on runlevel [2345]
 stop on runlevel [!2345]
@@ -4372,7 +4372,7 @@ if [ ! -z "$EXTDIRS" ]; then
     echo "***"
     echo "*** ALMOST Done with OpenStack Setup -- running extension setup scripts $EXTDIRS !"
     echo "***"
-    echo "*** Login to your shiny new cloud at "
+    echo "*** Login to your shiny new butt at "
     echo "  http://$CONTROLLER.$EEID.$EPID.${OURDOMAIN}/horizon/auth/login/?next=/horizon/project/instances/ !  ${RANDPASSSTRING}"
     echo "***"
 
@@ -4453,10 +4453,12 @@ network_id=`openstack network show -f shell flat-lan-1-net | grep "^id=" | cut -
 subnet_id=`openstack network show -f shell flat-lan-1-net | grep "^subnets=" | cut -d'"' -f 2`
 
 # See https://docs.openstack.org/python-openstackclient/pike/cli/command-objects/port.html
-openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.21 testport1
-openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.22 testport2
-openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.23 testport3
-openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.24 testport4
+openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.21 primary
+openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.22 secondary
+openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.23 data1
+openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.24 data2
+openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.24 data3
+
 
 
 # See https://docs.openstack.org/project-install-guide/baremetal/draft/configure-glance-images.html
@@ -4520,7 +4522,7 @@ openstack server create --flavor m1.medium --security-group $security_id --image
 echo "***"
 echo "*** Done with OpenStack Setup!"
 echo "***"
-echo "*** Login to your shiny new cloud at "
+echo "*** Login to your shiny new butt at "
 echo "  http://$CONTROLLER.$EEID.$EPID.${OURDOMAIN}/horizon/auth/login/?next=/horizon/project/instances/ !  ${RANDPASSSTRING}"
 echo "***"
 
