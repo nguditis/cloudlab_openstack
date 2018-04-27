@@ -4457,7 +4457,7 @@ openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-
 openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.22 secondary
 openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.23 data1
 openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.24 data2
-openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.24 data3
+openstack port create --network ${network_id} --fixed-ip subnet=${subnet_id},ip-address=10.11.10.25 data3
 
 
 
